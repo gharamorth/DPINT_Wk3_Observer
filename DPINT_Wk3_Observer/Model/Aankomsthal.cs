@@ -27,46 +27,22 @@ namespace DPINT_Wk3_Observer.Model
             Baggagebanden.Add(band1);
             Baggagebanden.Add(band2);
             Baggagebanden.Add(band3);
+            Baggagebanden.ForEach(bb => OnNext(bb));
         }
 
         public void NieuweInkomendeVlucht(string vertrokkenVanuit, int aantalKoffers)
         {
-            // TODO: Het proces moet straks automatisch gaan, dus als er lege banden zijn moet de vlucht niet in de wachtrij.
-            // Dan moet de vlucht meteen naar die band.
+            //problem nr 1
+            Baggageband legeband = Baggagebanden.FirstOrDefault(bb => bb.AantalKoffers == 0);
 
-            // Denk bijvoorbeeld aan: Baggageband legeBand = Baggagebanden.FirstOrDefault(b => b.AantalKoffers == 0);
-
-            Baggageband legeband = Baggagebanden.FirstOrDefault(bb=> bb.AantalKoffers == 0);
-
-            if (legeband != null)
+            if(legeband != null)
             {
-                int index = Baggagebanden.IndexOf(legeband);
-                //middels index direct het object aanpassen
-                Baggagebanden[index].VluchtVertrokkenVanuit = vertrokkenVanuit;
-                Baggagebanden[index].AantalKoffers = aantalKoffers;
+                legeband.HandelNieuweVluchtAf(new Vlucht(vertrokkenVanuit, aantalKoffers));
             }
             else
             {
-                // if there are no empty BaggageBanden
                 WachtendeVluchten.Add(new Vlucht(vertrokkenVanuit, aantalKoffers));
             }
-        }
-
-        public void WachtendeVluchtenNaarBand()
-        {
-            //while(Baggagebanden.Any(bb => bb.AantalKoffers == 0) && WachtendeVluchten.Any())
-            // TODO: Straks krijgen we een update van een baggageband. Dan hoeven we alleen maar te kijken of hij leeg is.
-            // Als dat zo is kunnen we vrijwel de hele onderstaande code hergebruiken en hebben we geen while meer nodig.
-
-            if (Baggagebanden.Any(bb => bb.AantalKoffers == 0) && WachtendeVluchten.Any())
-            {
-                Baggageband legeBand = Baggagebanden.FirstOrDefault(bb => bb.AantalKoffers == 0);
-                Vlucht volgendeVlucht = WachtendeVluchten.FirstOrDefault();
-                WachtendeVluchten.RemoveAt(0);
-
-                legeBand.HandelNieuweVluchtAf(volgendeVlucht);
-            }
-
         }
 
         public void OnError(Exception error)
@@ -86,7 +62,14 @@ namespace DPINT_Wk3_Observer.Model
         //it searches for the flights in the list but that's not really possible with this code as the flights have no UID
         public void OnNext(Baggageband value)
         {
-            WachtendeVluchtenNaarBand();
+            //problem nr 2
+            if (value.AantalKoffers == 0 && WachtendeVluchten.Any())
+            {
+                Baggageband empty = value;
+                Vlucht next = WachtendeVluchten.FirstOrDefault();
+                WachtendeVluchten.RemoveAt(0);
+                empty.HandelNieuweVluchtAf(next);
+            }
         }
 
     }
