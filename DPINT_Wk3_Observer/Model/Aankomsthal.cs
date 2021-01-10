@@ -16,14 +16,16 @@ namespace DPINT_Wk3_Observer.Model
         public Aankomsthal()
         {
             WachtendeVluchten = new List<Vlucht>();
-            Baggagebanden = new List<Baggageband>();
+            Baggagebanden = new List<Baggageband>
+            {
 
-            // TODO: Als baggageband Observable is, gaan we subscriben op band 1 zodat we updates binnenkrijgen.
-            Baggagebanden.Add(new Baggageband("Band 1", 30));
-            // TODO: Als baggageband Observable is, gaan we subscriben op band 2 zodat we updates binnenkrijgen.
-            Baggagebanden.Add(new Baggageband("Band 2", 60));
-            // TODO: Als baggageband Observable is, gaan we subscriben op band 3 zodat we updates binnenkrijgen.
-            Baggagebanden.Add(new Baggageband("Band 3", 90));
+                // TODO: Als baggageband Observable is, gaan we subscriben op band 1 zodat we updates binnenkrijgen.
+                new Baggageband("Band 1", 30),
+                // TODO: Als baggageband Observable is, gaan we subscriben op band 2 zodat we updates binnenkrijgen.
+                new Baggageband("Band 2", 60),
+                // TODO: Als baggageband Observable is, gaan we subscriben op band 3 zodat we updates binnenkrijgen.
+                new Baggageband("Band 3", 90)
+            };
         }
 
         public void NieuweInkomendeVlucht(string vertrokkenVanuit, int aantalKoffers)

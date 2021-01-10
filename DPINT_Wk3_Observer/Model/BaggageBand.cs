@@ -7,7 +7,9 @@ using System.Windows.Forms;
 
 namespace DPINT_Wk3_Observer.Model
 {
-    public class Baggageband
+    //on the Microsoft dogs a class implementing IObservable would look at another plain object class
+    //e.g. the BaggageHandler would be observable, looking at <BaggageInfo>.
+    public class Baggageband :Observable<Baggageband>
     {
         public string Naam { get; set; }
         private int _aantalKoffersPerMinuut;
@@ -39,6 +41,7 @@ namespace DPINT_Wk3_Observer.Model
             _huidigeVluchtTimer.Start();
 
             // TODO: We moeten het laten weten dat we een update hebben!
+            this.Notify(this);
         }
 
         private void KofferVanBandGehaald(object sender, EventArgs e)

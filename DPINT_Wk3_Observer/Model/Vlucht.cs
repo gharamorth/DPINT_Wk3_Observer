@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DPINT_Wk3_Observer.Model
 {
-    public class Vlucht
+    public class Vlucht :Observable<Vlucht>
     {
         public Vlucht(string vertrokkenVanuit, int aantalKoffers)
         {
