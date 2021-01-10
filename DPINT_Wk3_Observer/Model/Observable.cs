@@ -26,19 +26,18 @@ namespace DPINT_Wk3_Observer.Model
         {
             //check the implementation on the microsoft docs.
             throw new NotImplementedException();
+            //call "oncompleted" is you want
         }
 
         public IDisposable Subscribe(IObserver<T> observer)
         {
             //TODO: keep track of who's looking at this object
             //TODO: put the observer in the list of observers.
-            //this would allow us to know which obserrvers to notify.
-            if(!_observers.Contains(observer))
-            {
-                _observers.Add(observer);
-                //MS docs use onnext for each flight at this point
-                //maybe override in the Baggageband?
-            }
+            //this would allow us to know which obserrvers to notify
+            _observers.Add(observer);
+            //MS docs use onnext for each flight at this point
+            //maybe override in the Baggageband?
+            
             return new Unsubscriber(() => _observers.Remove(observer));
         }
 
@@ -48,7 +47,7 @@ namespace DPINT_Wk3_Observer.Model
         {
             //check the implementation on the microsoft docs.
             //use this to notify each observer that a change has occured with OnNext.
-            foreach(IObserver<T> obs in _observers)
+            foreach(var obs in _observers)
             {
                 obs.OnNext(subject);
             }

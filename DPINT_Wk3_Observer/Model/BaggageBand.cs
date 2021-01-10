@@ -40,7 +40,6 @@ namespace DPINT_Wk3_Observer.Model
 
             _huidigeVluchtTimer.Start();
 
-            // TODO: We moeten het laten weten dat we een update hebben!
             this.Notify(this);
         }
 
@@ -54,7 +53,7 @@ namespace DPINT_Wk3_Observer.Model
                 _huidigeVluchtTimer.Stop();
             }
 
-            // TODO: We moeten het laten weten dat we een update hebben!
+            Notify(this);
         }
     }
 }

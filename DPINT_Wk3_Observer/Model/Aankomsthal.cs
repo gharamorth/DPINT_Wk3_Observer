@@ -7,25 +7,26 @@ using System.Threading.Tasks;
 
 namespace DPINT_Wk3_Observer.Model
 {
-    public class Aankomsthal
+    public class Aankomsthal :IObserver<Baggageband>
     {
-        // TODO: Hier een ObservableCollection van maken, dan weten we wanneer er vluchten bij de wachtrij bij komen of afgaan.
-        public List<Vlucht> WachtendeVluchten { get; private set; }
+        public ObservableCollection<Vlucht> WachtendeVluchten { get; private set; }
         public List<Baggageband> Baggagebanden { get; private set; }
 
         public Aankomsthal()
         {
-            WachtendeVluchten = new List<Vlucht>();
-            Baggagebanden = new List<Baggageband>
-            {
+            WachtendeVluchten = new ObservableCollection<Vlucht>();
+            Baggagebanden = new List<Baggageband>();
 
-                // TODO: Als baggageband Observable is, gaan we subscriben op band 1 zodat we updates binnenkrijgen.
-                new Baggageband("Band 1", 30),
-                // TODO: Als baggageband Observable is, gaan we subscriben op band 2 zodat we updates binnenkrijgen.
-                new Baggageband("Band 2", 60),
-                // TODO: Als baggageband Observable is, gaan we subscriben op band 3 zodat we updates binnenkrijgen.
-                new Baggageband("Band 3", 90)
-            };
+            Baggageband band1 = new Baggageband("Band 1", 30);
+            Baggageband band2 = new Baggageband("Band 1", 60);
+            Baggageband band3 = new Baggageband("Band 1", 90);
+            band1.Subscribe(this);
+            band2.Subscribe(this);
+            band3.Subscribe(this);
+
+            Baggagebanden.Add(band1);
+            Baggagebanden.Add(band2);
+            Baggagebanden.Add(band3);
         }
 
         public void NieuweInkomendeVlucht(string vertrokkenVanuit, int aantalKoffers)
@@ -35,22 +36,58 @@ namespace DPINT_Wk3_Observer.Model
 
             // Denk bijvoorbeeld aan: Baggageband legeBand = Baggagebanden.FirstOrDefault(b => b.AantalKoffers == 0);
 
-            WachtendeVluchten.Add(new Vlucht(vertrokkenVanuit, aantalKoffers));
+            Baggageband legeband = Baggagebanden.FirstOrDefault(bb=> bb.AantalKoffers == 0);
+
+            if (legeband != null)
+            {
+                int index = Baggagebanden.IndexOf(legeband);
+                //middels index direct het object aanpassen
+                Baggagebanden[index].VluchtVertrokkenVanuit = vertrokkenVanuit;
+                Baggagebanden[index].AantalKoffers = aantalKoffers;
+            }
+            else
+            {
+                // if there are no empty BaggageBanden
+                WachtendeVluchten.Add(new Vlucht(vertrokkenVanuit, aantalKoffers));
+            }
         }
 
         public void WachtendeVluchtenNaarBand()
         {
-            while(Baggagebanden.Any(bb => bb.AantalKoffers == 0) && WachtendeVluchten.Any())
+            //while(Baggagebanden.Any(bb => bb.AantalKoffers == 0) && WachtendeVluchten.Any())
+            // TODO: Straks krijgen we een update van een baggageband. Dan hoeven we alleen maar te kijken of hij leeg is.
+            // Als dat zo is kunnen we vrijwel de hele onderstaande code hergebruiken en hebben we geen while meer nodig.
+
+            if (Baggagebanden.Any(bb => bb.AantalKoffers == 0) && WachtendeVluchten.Any())
             {
-                // TODO: Straks krijgen we een update van een baggageband. Dan hoeven we alleen maar te kijken of hij leeg is.
-                // Als dat zo is kunnen we vrijwel de hele onderstaande code hergebruiken en hebben we geen while meer nodig.
-                
                 Baggageband legeBand = Baggagebanden.FirstOrDefault(bb => bb.AantalKoffers == 0);
                 Vlucht volgendeVlucht = WachtendeVluchten.FirstOrDefault();
                 WachtendeVluchten.RemoveAt(0);
 
                 legeBand.HandelNieuweVluchtAf(volgendeVlucht);
             }
+
         }
+
+        public void OnError(Exception error)
+        {
+            //should never occur
+            throw new NotImplementedException();
+        }
+
+        public void OnCompleted()
+        {
+            //will not be used
+            throw new NotImplementedException();
+        }
+
+        //what to do with this function?
+        //in the MS docs it checks whether the bags gone.
+        //it searches for the flights in the list but that's not really possible with this code as the flights have no UID
+        public void OnNext(Baggageband value)
+        {
+            WachtendeVluchtenNaarBand();
+        }
+
     }
 }

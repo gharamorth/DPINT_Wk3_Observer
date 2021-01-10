@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DPINT_Wk3_Observer.ViewModel
 {
-    public class VluchtViewModel : ViewModelBase
+    public class VluchtViewModel : ViewModelBase, IObserver<Vlucht>
     {
         private string _vertrokkenVanuit;
         public string VertrokkenVanuit
@@ -26,15 +26,24 @@ namespace DPINT_Wk3_Observer.ViewModel
 
         public VluchtViewModel(Vlucht vlucht)
         {
-            Update(vlucht);
-            // TODO: Vlucht is straks observable, kunnen we daar niet op abonneren?
+            OnNext(vlucht);
+            vlucht.Subscribe(this);//geabboneerd
         }
 
-        public void Update(Vlucht vlucht)
+        public void OnNext(Vlucht value)
         {
-            // TODO: Dit mag natuurlijk naar de OnNext methode toe.
-            VertrokkenVanuit = vlucht.VertrokkenVanuit;
-            AantalKoffers = vlucht.AantalKoffers;
+            VertrokkenVanuit = value.VertrokkenVanuit;
+            AantalKoffers = value.AantalKoffers;
+        }
+
+        public void OnError(Exception error)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnCompleted()
+        {
+            throw new NotImplementedException();
         }
     }
 }

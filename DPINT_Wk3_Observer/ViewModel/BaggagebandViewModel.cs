@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DPINT_Wk3_Observer.ViewModel
 {
-    public class BaggagebandViewModel : ViewModelBase
+    public class BaggagebandViewModel : ViewModelBase, IObserver<Baggageband>
     {
         private string _vluchtVertrokkenVanuit;
         public string VluchtVertrokkenVanuit
@@ -33,14 +33,30 @@ namespace DPINT_Wk3_Observer.ViewModel
 
         public BaggagebandViewModel(Baggageband band)
         {
-            Update(band);
+            band.Subscribe(this);
         }
 
-        public void Update(Baggageband value)
+        public void OnNext(Baggageband value)
         {
+            //_aantalKoffers = value.AantalKoffers;
+            //_vluchtVertrokkenVanuit = value.VluchtVertrokkenVanuit;
+
             VluchtVertrokkenVanuit = value.VluchtVertrokkenVanuit;
             AantalKoffers = value.AantalKoffers;
             Naam = value.Naam;
         }
+
+        public void OnError(Exception error)
+        {
+            //not used
+            throw new NotImplementedException();
+        }
+
+        public void OnCompleted()
+        {
+            //not used
+            throw new NotImplementedException();
+        }
+
     }
 }
